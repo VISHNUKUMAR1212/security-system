@@ -1,0 +1,189 @@
+
+// PIC16F877A Configuration Bit Settings
+
+// 'C' source line config statements
+
+// CONFIG
+#pragma config FOSC = HS        // Oscillator Selection bits (HS oscillator)
+#pragma config WDTE = OFF       // Watchdog Timer Enable bit (WDT disabled)
+#pragma config PWRTE = OFF      // Power-up Timer Enable bit (PWRT disabled)
+#pragma config BOREN = OFF      // Brown-out Reset Enable bit (BOR disabled)
+#pragma config LVP = OFF        // Low-Voltage (Single-Supply) In-Circuit Serial Programming Enable bit (RB3 is digital I/O, HV on MCLR must be used for programming)
+#pragma config CPD = OFF        // Data EEPROM Memory Code Protection bit (Data EEPROM code protection off)
+#pragma config WRT = OFF        // Flash Program Memory Write Enable bits (Write protection off; all program memory may be written to by EECON control)
+#pragma config CP = OFF         // Flash Program Memory Code Protection bit (Code protection off)
+
+// #pragma config statements should precede project file includes.
+// Use project enums instead of #define for ON and OFF.
+
+#include <xc.h>
+#define _XTAL_FREQ 20000000
+#define   RS  RD1
+#define EN  RD0
+
+void cal(unsigned char  x[]);
+void lcdinit();
+void cmd(unsigned int i);
+void data(unsigned int j);
+void uartinit();
+void lcd_string(char *);
+int val=0,count=0;
+int   n =1000;
+char ar[20]="PSWD CORRECT";
+char ar2[20]="ACCESS GRANTED";
+char ar1[20]="PSWD INCORRECT";
+char ar3[20]="ACCESS DENIED";
+unsigned char arr[5];
+int m=0xc0;
+int i=0;
+void main(){
+    
+    lcdinit();
+    uartinit();
+    cmd(0x80);
+   // lcd_string(ar);
+    while(1){
+       
+       //int i= j++;
+    while(PIR1&0x20){
+        //__delay_ms(1000);
+       
+           while(count!=5) {
+       // if(PIR1&0x20){
+            arr[i]=RCREG;
+            
+              // val=RCREG*n;
+             //  n=n/10;
+            ++count;
+                    
+            //cmd(m++);
+          // data(arr[i]);
+           i++;
+           break;
+           
+         
+           
+          //__delay_ms(1000);
+            }
+           if(count==5){
+    
+            
+           // count=count+1;
+        //__delay_ms(1000);}}}
+//            val=val+RCREG*n;
+//            n=n/10;
+//            __delay_ms(1000);
+//      
+//    if(count==4){
+// 
+//        cal(arr);}}
+//        void cal(unsigned char x[]){
+               
+//               while(1)
+//               {
+                   if( arr[0] == '1' && arr[1]=='2' && arr[2]=='3' && arr[3]=='4')
+            {
+                       cmd(0x80);
+                        for(int i=0;i<14;i++)
+                {
+                    data(ar2[i]);
+                    __delay_ms(1);
+                }
+               // PORTB=0x01;
+                //__delay_ms(1000);
+                
+                
+                cmd(0xC0);
+//               data('i');
+//               __delay_ms(1000);
+                for(int i=0;i<12;i++)
+                {
+                    data(ar[i]);
+                    __delay_ms(1);
+                }
+                //break;
+            }
+            else
+            {
+                       cmd(0x80);
+                
+                for(int i=0;i<14;i++)
+                {
+                    
+//               data(arr[i]);
+//               __delay_ms(1000);
+                    data(ar3[i]);
+                    __delay_ms(1);
+                }cmd(0xC0);
+                
+                for(int i=0;i<14;i++)
+                {
+                    
+//               data(arr[i]);
+//               __delay_ms(1000);
+                    data(ar1[i]);
+                    __delay_ms(1);
+                }
+            }
+               }}
+   
+    }
+}//count=0;} 
+               //}
+   
+//void lcd_string(char *str)
+//{
+//    while(*str)
+//    {
+//        data(*str++);
+//    }
+//}
+
+void uartinit(){
+   // OPTION_REG&=0x7f;
+    TRISB=0x00;
+    TRISC=0xc0;
+     //ADCON1=0x0f;
+     //TRISE=0x00;
+    TRISD=0x00;
+    RCSTA=0X90;
+    SPBRG=0X09;
+    TXSTA=0X20;
+    
+}
+void lcdinit(){
+    TRISB=0X00;
+    PORTB=0X00;
+    TRISD=0X00;
+    PORTD=0X00;
+    __delay_ms(20);
+    cmd(0x38);//8bit 5x7dots
+    cmd(0x0c);//dison curoff
+    cmd(0x06);//entry mode set
+    cmd(0x01);//clear display
+    
+    
+}
+void data(unsigned int j){
+    RS=1;
+    PORTB=j;
+    EN=1;
+    __delay_ms(10);
+    EN=0;
+    __delay_ms(10);
+    
+}
+      
+void cmd(unsigned int i){
+    RS=0;
+    PORTB=i;
+  
+    EN=1;
+    __delay_ms(10);
+    EN=0;
+    __delay_ms(10);
+     
+    
+}
+
+
